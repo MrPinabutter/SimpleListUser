@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { Input } from '../components/Input';
 import { useState } from 'react';
 
-const Register: NextPage = () => {
+const EditProfile: NextPage = () => {
   const [name, setName] = useState('');
   const [matricula, setMatricula] = useState('');
   const [rg, setRg] = useState('');
@@ -17,7 +17,7 @@ const Register: NextPage = () => {
     <>
       <Head>
         <title>
-          Registro | Vitinho listas
+          Editar | Vitinho listas
         </title>
       </Head>
 
@@ -25,7 +25,7 @@ const Register: NextPage = () => {
         <Header />
         <Content>
           <FormContent>
-            <h1>Registro</h1>
+            <h1>Editar</h1>
 
             <Input
               label="Nome"
@@ -132,4 +132,4 @@ const Button = styled.button`
   }
 `
 
-export default Register
+export default EditProfile

@@ -160,7 +160,7 @@ const Button = styled.button`
 
   margin-top: 1rem;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.1);
-  background: #4CC9F0;
+  background: #FFAD51;
   border: none;
   border-radius: 6px;
   display: flex;
@@ -172,7 +172,7 @@ const Button = styled.button`
   transition: 0.2s background;
 
   :hover {
-    background: #45B4D6;
+    background: #F6972C;
   }
 `
 

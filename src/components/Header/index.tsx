@@ -6,7 +6,11 @@ export const Header = () => {
   return(
     <Container>
       <h1>
-        Vitinho Listas
+        <Link href="/">
+          <a>
+            Vitinho Listas
+          </a>
+        </Link>
       </h1>
 
       <nav>

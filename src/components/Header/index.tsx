@@ -42,12 +42,12 @@ export const Header = () => {
 
 const Container = styled.header`
   height: 90px;
-  width: 100%;
-  background: #F2CC0C;
+  width: 100vw;
+  background: #FFD700;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 2rem;
+  padding: 1rem 2rem;
 
   h1 {
     color: white;

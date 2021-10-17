@@ -1,23 +1,36 @@
 import type { NextPage } from 'next'
-import { Header } from '../components/Header'
+import { Header } from '../../components/Header'
 import Head from 'next/head'
 
 import styled from 'styled-components';
-import { Input } from '../components/Input';
-import { useCallback, useState } from 'react';
-import Router from 'next/router';
+import { Input } from '../../components/Input';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { api } from '../services/api';
+import Router from 'next/router';
+import { api } from '../../services/api';
 
-const Register: NextPage = () => {
-  const [name, setName] = useState('');
-  const [matricula, setMatricula] = useState('');
-  const [rg, setRg] = useState('');
-  const [password, setPassword] = useState('');
-  const [adress, setAdress] = useState('');
+const ChangePassword: NextPage = () => {
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const handleSubmit = async () => {
-    if(!name || !matricula || !rg || !password || !adress) {
+    const { id } = Router.query;
+
+    if (!id) {
+      toast.error('Usuário não econtrado!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      Router.back();
+    }
+
+    if(!oldPassword || !newPassword) {
       toast.error('Preencha os campos vazios!', {
         position: "top-right",
         autoClose: 5000,
@@ -31,17 +44,29 @@ const Register: NextPage = () => {
     }
 
     const body = {
-      name,
-      registration:matricula,
-      rg,
-      password,
-      adress,
+      registration: id,
+      oldPassword, 
+      newPassword,
     }
 
     try {
-      await api.post('http://localhost:3030/users', body);
+      const res = await api.patch('/change-password', body);
 
-      toast.success('🦄 Cadastrado!', {
+      if(res.status == 200){
+        toast.success('Senha alterada com sucesso!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        Router.back();
+      }
+      else throw new Error();
+    } catch (e) {
+      toast.error('Senha anterior incorreta!', {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -50,18 +75,15 @@ const Register: NextPage = () => {
         draggable: true,
         progress: undefined,
       });
-
-      Router.push('/')
-    } catch (e) {
-      console.error()
     }
   }
+
 
   return (
     <>
       <Head>
         <title>
-          Registro | Vitinho listas
+          Mudar senha | Vitinho listas
         </title>
       </Head>
 
@@ -69,42 +91,25 @@ const Register: NextPage = () => {
         <Header />
         <Content>
           <FormContent>
-            <h1>Registro</h1>
+            <h1>Alterar senha</h1>
 
             <Input
-              label="Nome"
-              setValue={(val:string) => setName(val)}
-              value={name}
+              label="Senha antiga"
+              setValue={(val:string) => setOldPassword(val)}
+              value={oldPassword}
+              password
             />
 
             <Input
-              label="Matricula"
-              setValue={(val:string) => setMatricula(val)}
-              value={matricula}
-            />
-
-            <Input
-              label="RG"
-              setValue={(val:string) => setRg(val)}
-              value={rg}
-            />
-
-            <Input
-              label="Endereço"
-              setValue={(val:string) => setAdress(val)}
-              value={adress}
-            />
-
-            <Input
-              label="Senha"
-              setValue={(val:string) => setPassword(val)}
-              value={password}
+              label="Nova senha"
+              setValue={(val:string) => setNewPassword(val)}
+              value={newPassword}
               password
             />
 
             <div className="buttonContainer">
-              <Button type="button" onClick={() => handleSubmit()}>
-                Me cria!
+              <Button type="button" onClick={handleSubmit}>
+                Muda a senha!
               </Button>
             </div>
           </FormContent>
@@ -176,4 +181,4 @@ const Button = styled.button`
   }
 `
 
-export default Register
+export default ChangePassword

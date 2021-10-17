@@ -1,17 +1,97 @@
 import type { NextPage } from 'next'
-import { Header } from '../components/Header'
+import { Header } from '../../components/Header'
 import Head from 'next/head'
 
 import styled from 'styled-components';
-import { Input } from '../components/Input';
+import { Input } from '../../components/Input';
 import { useState } from 'react';
+import { api } from '../../services/api';
+import Router from 'next/router';
+import { toast } from 'react-toastify';
+import { useEffect } from 'react';
+
+type UserProp = {
+  name: string,
+  registration: string,
+  adress: string,
+  rg: string
+}
 
 const EditProfile: NextPage = () => {
   const [name, setName] = useState('');
-  const [matricula, setMatricula] = useState('');
   const [rg, setRg] = useState('');
-  const [password, setPassword] = useState('');
   const [adress, setAdress] = useState('');
+
+  const loadInfo = async () => {
+    const {id} = Router.query
+
+    try {
+      const { data } = await api.get<{ data:UserProp }>(`/users/${id}`);
+
+      setName(data.data.name)
+      setRg(data.data.rg)
+      setAdress(data.data.adress)
+    } catch (e) {
+      Router.back()
+    }
+  }
+
+  const handleEditUser = async () => {
+    const {id} = Router.query
+
+    if(!id) {
+      toast.error('Usuário não encontrado!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      Router.back();
+    }
+
+    const body = {
+      name,
+      rg,
+      adress,
+      registration: id
+    }
+
+    try {
+      const res = await api.put('/users', body);
+
+      if(res.status == 200){
+        toast.success('Informações alteradas com sucesso!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+
+        Router.push(`/user/${id}`)
+      }
+    } catch(e) {
+      toast.error('Houve um erro ao alterar informações do usuário!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }
+
+  useEffect(() => {
+    loadInfo();
+  }, []) 
 
   return (
     <>
@@ -34,12 +114,6 @@ const EditProfile: NextPage = () => {
             />
 
             <Input
-              label="Matricula"
-              setValue={(val:string) => setMatricula(val)}
-              value={matricula}
-            />
-
-            <Input
               label="RG"
               setValue={(val:string) => setRg(val)}
               value={rg}
@@ -51,16 +125,9 @@ const EditProfile: NextPage = () => {
               value={adress}
             />
 
-            <Input
-              label="Senha"
-              setValue={(val:string) => setPassword(val)}
-              value={password}
-              password
-            />
-
             <div className="buttonContainer">
-              <Button>
-                Entrar!
+              <Button type="button" onClick={handleEditUser}>
+                Altera aí!
               </Button>
             </div>
           </FormContent>

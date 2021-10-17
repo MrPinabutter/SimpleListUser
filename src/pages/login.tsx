@@ -5,10 +5,60 @@ import Head from 'next/head'
 import styled from 'styled-components';
 import { Input } from '../components/Input';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import Router from 'next/router';
+import { api } from '../services/api';
 
 const Login: NextPage = () => {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleSubmit = async () => {
+    if(!name || !password) {
+      toast.error('Preencha os campos vazios!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      return 
+    }
+
+    const body = {
+      registration: name,
+      password,
+    }
+
+    try {
+      const res = await api.post('/login', body);
+
+      if(res.status == 200)
+        toast.success('Usuário logado!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      else throw new Error();
+    } catch (e) {
+      toast.error('Senha ou usuário incorretos!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }
+
 
   return (
     <>
@@ -38,7 +88,7 @@ const Login: NextPage = () => {
             />
 
             <div className="buttonContainer">
-              <Button>
+              <Button type="button" onClick={handleSubmit}>
                 Entrar!
               </Button>
             </div>
